@@ -1,24 +1,23 @@
 import smtplib
+from bs4 import BeautifulSoup
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from config import Config
 
+# Get the emails from the files
+with open('email.html','r') as html_file:
+    email_body_html = BeautifulSoup(html_file, "html.parser")
+
+with open("email.txt") as text_file:
+    email_body_text = text_file.read()
+
+# Set up the sender, receiver, and username and password for the email
 email_from = Config.EMAIL_ADDRESS
 email_to = Config.EMAIL_RECIPIENT
-email_body_text = 'Hello, World!\n\nThis is my test email!'
-email_body_html = """
-<html>
-  <head></head>
-  <body>
-    <p>Hello, World!</p>
-    <p>This is my test email!</p>
-    <p>Here's a <a href="http://www.python.org">link</a>.</p>
-  </body>
-</html>
-"""
 username = Config.USERNAME
 password = Config.PASSWORD
 
+# Build the main elements of the email
 email = MIMEMultipart('alternative')
 email['From'] = email_from
 email['To'] = email_to
@@ -26,6 +25,7 @@ email['Subject'] = 'Test Email'
 email.attach(MIMEText(email_body_text, 'plain'))
 email.attach(MIMEText(email_body_html, 'html'))
 
+# Send the email
 # Google
 # server = smtplib.SMTP('smtp.gmail.com:587')
 # Outlook
